@@ -26,6 +26,8 @@ SECRET_KEY = 'django-insecure-3bxop0uydsm3bpl(ft&k22(6!*hs0#+2disclp1g&$$xa1n=4b
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+
+# Allow all hosts for development
 ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 if os.environ.get('CODESPACE_NAME'):
     ALLOWED_HOSTS.append(f"{os.environ.get('CODESPACE_NAME')}-8000.app.github.dev")
@@ -53,6 +55,7 @@ INSTALLED_APPS = [
     'activities',
     'teams',
     'leaderboard',
+    'workouts',
 ]
 
 SITE_ID = 1
@@ -95,7 +98,7 @@ WSGI_APPLICATION = 'octofit_tracker.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'djongo',
-        'NAME': 'octofit_tracker',
+        'NAME': 'octofit_db',
         'CLIENT': {
             'host': 'localhost',
             'port': 27017,
@@ -145,17 +148,12 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# CORS Configuration
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
-]
 
-# Add codespace origin if running in GitHub Codespaces
-if os.environ.get('CODESPACE_NAME'):
-    CORS_ALLOWED_ORIGINS.append(f"https://{os.environ.get('CODESPACE_NAME')}-3000.app.github.dev")
-
+# CORS Configuration: Allow all origins, methods, and headers
+CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_HEADERS = ['*']
+CORS_ALLOW_METHODS = ['*']
 
 # REST Framework Configuration
 REST_FRAMEWORK = {
