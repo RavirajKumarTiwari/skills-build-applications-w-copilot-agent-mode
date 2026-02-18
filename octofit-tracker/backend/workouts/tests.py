@@ -1,4 +1,11 @@
-from django.test import TestCase
+I:
+- src/App.js
+- src/index.js
+- src/components/Activities.js
+- src/components/Leaderboard.js
+- src/components/Teams.js
+- src/components/Users.js
+- src/cfrom django.test import TestCase
 from teams.models import Team
 from users.models import User
 from .models import Workout
