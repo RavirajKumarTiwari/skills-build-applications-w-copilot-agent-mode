@@ -28,7 +28,9 @@ DEBUG = True
 
 
 # Allow all hosts for development
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+if os.environ.get('CODESPACE_NAME'):
+    ALLOWED_HOSTS.append(f"{os.environ.get('CODESPACE_NAME')}-8000.app.github.dev")
 
 
 # Application definition
@@ -53,6 +55,7 @@ INSTALLED_APPS = [
     'activities',
     'teams',
     'leaderboard',
+    'workouts',
 ]
 
 SITE_ID = 1

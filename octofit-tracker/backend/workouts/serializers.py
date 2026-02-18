@@ -1,10 +1,10 @@
 from rest_framework import serializers
-from .models import Team
+from .models import Workout
 
 
-class TeamSerializer(serializers.ModelSerializer):
+class WorkoutSerializer(serializers.ModelSerializer):
     id = serializers.CharField(read_only=True)
 
     class Meta:
-        model = Team
+        model = Workout
         fields = '__all__'

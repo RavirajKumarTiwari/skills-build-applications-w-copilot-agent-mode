@@ -1,9 +1,10 @@
 from django.core.management.base import BaseCommand
+from django.db import transaction
 from users.models import User
 from teams.models import Team
 from activities.models import Activity
 from leaderboard.models import Leaderboard
-from django.db import transaction
+from workouts.models import Workout
 
 class Command(BaseCommand):
     help = 'Populate the octofit_db database with test data'
@@ -11,10 +12,11 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         with transaction.atomic():
             self.stdout.write(self.style.WARNING('Deleting old data...'))
+            Workout.objects.all().delete()
+            Leaderboard.objects.all().delete()
+            Activity.objects.all().delete()
             User.objects.all().delete()
             Team.objects.all().delete()
-            Activity.objects.all().delete()
-            Leaderboard.objects.all().delete()
 
             self.stdout.write(self.style.SUCCESS('Creating teams...'))
             marvel = Team.objects.create(name='Team Marvel')
@@ -29,12 +31,12 @@ class Command(BaseCommand):
             diana = User.objects.create(username='wonderwoman', email='diana@prince.com', team=dc)
 
             self.stdout.write(self.style.SUCCESS('Creating activities...'))
-            Activity.objects.create(user=tony, type='run', duration=30, distance=5)
-            Activity.objects.create(user=steve, type='cycle', duration=60, distance=20)
-            Activity.objects.create(user=bruce, type='swim', duration=45, distance=2)
-            Activity.objects.create(user=clark, type='run', duration=50, distance=10)
-            Activity.objects.create(user=brucew, type='cycle', duration=70, distance=25)
-            Activity.objects.create(user=diana, type='swim', duration=40, distance=3)
+            Activity.objects.create(user=tony, activity_type='run', duration_minutes=30, distance_km=5)
+            Activity.objects.create(user=steve, activity_type='cycle', duration_minutes=60, distance_km=20)
+            Activity.objects.create(user=bruce, activity_type='swim', duration_minutes=45, distance_km=2)
+            Activity.objects.create(user=clark, activity_type='run', duration_minutes=50, distance_km=10)
+            Activity.objects.create(user=brucew, activity_type='cycle', duration_minutes=70, distance_km=25)
+            Activity.objects.create(user=diana, activity_type='swim', duration_minutes=40, distance_km=3)
 
             self.stdout.write(self.style.SUCCESS('Creating leaderboard...'))
             Leaderboard.objects.create(user=tony, score=100)
@@ -44,12 +46,20 @@ class Command(BaseCommand):
             Leaderboard.objects.create(user=brucew, score=95)
             Leaderboard.objects.create(user=diana, score=105)
 
-            self.stdout.write(self.style.SUCCESS('Database populated with test data!'))
+            self.stdout.write(self.style.SUCCESS('Creating workouts...'))
+            Workout.objects.create(
+                name='Avengers Endurance',
+                description='Team Marvel circuit',
+                duration_minutes=45,
+                intensity='high',
+                created_by=tony,
+            )
+            Workout.objects.create(
+                name='Justice League Strength',
+                description='Team DC strength session',
+                duration_minutes=50,
+                intensity='medium',
+                created_by=clark,
+            )
 
-            # Ensure unique index on email
-            from django.conf import settings
-            from pymongo import ASCENDING
-            db = settings.DATABASES['default']['NAME']
-            from djongo import connection
-            connection.cursor().db_conn["users_user"].create_index([("email", ASCENDING)], unique=True)
-            self.stdout.write(self.style.SUCCESS('Unique index on email created for users!'))
+            self.stdout.write(self.style.SUCCESS('Database populated with test data!'))
